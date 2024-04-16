@@ -80,6 +80,7 @@ ovafile="$osname-$VM_RELEASE.qcow2.xz"
 _idfile='~/.ssh/host.id_rsa'
 
 importVM() {
+  echo "Current time is: $(date -u)"
 
   bash $vmsh setup
 
@@ -118,22 +119,30 @@ importVM() {
 
 
 waitForVMReady() {
+  echo "Current time is: $(date -u)"
+
   bash $vmsh waitForVMReady "$osname"
 }
 
 
 #using the default ksh
 execSSH() {
+  echo "Current time is: $(date -u)"
+
   exec ssh "$osname"
 }
 
 #using the sh 
 execSSHSH() {
+  echo "Current time is: $(date -u)"
+
   exec ssh "$osname" sh
 }
 
 
 addNAT() {
+  echo "Current time is: $(date -u)"
+
   _prot="$1"
   _hostport="$2"
   _vmport="$3"
@@ -157,20 +166,28 @@ addNAT() {
 }
 
 setMemory() {
+  echo "Current time is: $(date -u)"
+
   bash $vmsh setMemory "$osname" "$@"
 }
 
 setCPU() {
+  echo "Current time is: $(date -u)"
+
   bash $vmsh setCPU "$osname" "$@"
 }
 
 startVM() {
+  echo "Current time is: $(date -u)"
+
   bash $vmsh startVM "$osname"
 }
 
 
 
 rsyncToVM() {
+  echo "Current time is: $(date -u)"
+
   _pwd="$PWD"
   cd "$_oldPWD"
   rsync -avrtopg -e 'ssh -o MACs=umac-64-etm@openssh.com' --exclude _actions --exclude _PipelineMapping  $HOME/work/  $osname:work
@@ -179,6 +196,8 @@ rsyncToVM() {
 
 
 rsyncBackFromVM() {
+  echo "Current time is: $(date -u)"
+
   _pwd="$PWD"
   cd "$_oldPWD"
   rsync -vrtopg   -e 'ssh -o MACs=umac-64-etm@openssh.com' $osname:work/ $HOME/work
@@ -187,6 +206,8 @@ rsyncBackFromVM() {
 
 
 installRsyncInVM() {
+  echo "Current time is: $(date -u)"
+
   ssh "$osname" sh <<EOF
 if ! command -v rsync; then
 $VM_INSTALL_CMD $VM_RSYNC_PKG
@@ -196,6 +217,8 @@ EOF
 }
 
 runSSHFSInVM() {
+  echo "Current time is: $(date -u)"
+
 
   if [ -e "hooks/onRunSSHFS.sh" ] && ssh "$osname" sh <hooks/onRunSSHFS.sh; then
     echo "OK";
@@ -230,6 +253,8 @@ EOF
 
 #run in the vm, just as soon as the vm is up
 onStarted() {
+  echo "Current time is: $(date -u)"
+
   bash $vmsh addSSHHost $osname "$_idfile"
   #just touch the file, so that the user can access this file in the VM
   echo "" >>${GITHUB_ENV}
@@ -241,6 +266,8 @@ onStarted() {
 
 #run in the vm, just after the files are initialized
 onInitialized() {
+  echo "Current time is: $(date -u)"
+
   if [ -e "hooks/onInitialized.sh" ]; then
     ssh "$osname" sh <hooks/onInitialized.sh
   fi
@@ -248,6 +275,8 @@ onInitialized() {
 
 
 onBeforeStartVM() {
+  echo "Current time is: $(date -u)"
+
   #run in the host machine, the VM is imported, but not booted yet.
   if [ -e "hooks/onBeforeStartVM.sh" ]; then
     echo "Run hooks/onBeforeStartVM.sh"
@@ -259,6 +288,8 @@ onBeforeStartVM() {
 
 
 showDebugInfo() {
+  echo "Current time is: $(date -u)"
+
   echo "==================Debug Info===================="
   pwd && ls -lah && sudo ps aux
   bash -c 'pwd && ls -lah ~/.ssh/'
